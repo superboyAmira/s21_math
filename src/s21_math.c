@@ -5,19 +5,6 @@
 
 #include "s21_math.h"
 
-// long double s21_check(double x) {
-//    for (; x < -2 * S21_PI || 2 * S21_PI < x;) { // значения в обозначенных
-//    промежутках максимально аппроксимированы к реальным
-//        if (x > 2 * S21_PI) { // если х выходит за обозначенный промежуток, то
-//        мы возвращаем его внутрь, потому что значения идентичны
-//            x -= 2 * S21_PI;
-//        } else {
-//            x += 2 * S21_PI;
-//        }
-//    }
-//    return x;
-// }
-
 long double s21_factorial(int N) {
   if (N == 0 || N == 1) {
     return 1;
@@ -27,7 +14,7 @@ long double s21_factorial(int N) {
 }
 
 long double s21_log(double x) {  // разложение по методу Галея
-  int ex_pow = 0;  // сколько раз можем х разделить на экспоненту
+  int ex_pow = 0;
   long double res = 0;
   double compare = 0;
 
@@ -40,8 +27,7 @@ long double s21_log(double x) {  // разложение по методу Га�
   } else if (x < 0.0 || x == S21_NAN || x == -S21_NAN || x == -S21_NEG_INF) {
     res = S21_NAN;
   } else {
-    for (; x > S21_E; x /= S21_E, ex_pow++)
-      continue;  // чтобы поизменялось ex_pow
+    for (; x > S21_E; x /= S21_E, ex_pow++) continue;
     for (int i = 0; i < 200; i++) {
       compare = res;
       res = compare + 2 * (x - s21_exp(compare)) / (x + s21_exp(compare));
@@ -51,7 +37,7 @@ long double s21_log(double x) {  // разложение по методу Га�
   return res;
 }
 
-long double s21_fmod(double x, double y) {  // остаток от деления
+long double s21_fmod(double x, double y) {
   long double result = 0.0;
   int flag_minus = FALSE;
   if (y == 0.0 || x == S21_POS_INF || x == S21_NEG_INF || x == S21_NAN ||
@@ -71,8 +57,7 @@ long double s21_fmod(double x, double y) {  // остаток от делени�
     }
     while (TRUE) {
       x -= y;
-      if (x < 0.0) {  // мы постепенно вычитаем из делимого делитель, пока
-                      // остаток не стане меньше нуля
+      if (x < 0.0) {
         if (flag_minus) {
           result = -(x + y);
         } else {
@@ -85,7 +70,7 @@ long double s21_fmod(double x, double y) {  // остаток от делени�
   return result;
 }
 
-long double s21_floor(double x) {  // округление
+long double s21_floor(double x) {
   long double result = 0.0;
 
   if (x > 0.0) {
@@ -122,9 +107,8 @@ long double s21_fabs(double x) {
   return result;
 }
 
-long double s21_exp(double x) {  // ряд тейлора для Е
-  //    long double numerator = x; // числитель
-  long double middle = 1.0;  // промежуточное значение
+long double s21_exp(double x) {
+  long double middle = 1.0;
   double count = 1.0;
   long double result = 1.0;
   if (x == S21_NAN) {
@@ -139,9 +123,6 @@ long double s21_exp(double x) {  // ряд тейлора для Е
     result = S21_E;
   } else {
     while (s21_fabs(middle) > 1e-15) {
-      //  for (int count = 1; count < 500; count++) {
-      //      result += numerator / s21_factorial(count);
-      //      numerator *= x;
       middle *= x / count;
       result += middle;
       count++;
@@ -190,11 +171,8 @@ long double s21_sin(double x) {
     while (s21_fabs(sumMember) > S21_EPS) {
       znamenatel *=
           ((count << 1) *
-           ((count << 1) + 1));  // -6 20 // замена факториалу с помощью
-                                 // побитового сдвига для ускорения вычисления
-      chislitel *=
-          -1 * x *
-          x;  // -x^3 x^5 // один из мноителей ряда тейлора, просто без степени
+           ((count << 1) + 1));
+      chislitel *= -1 * x * x;
       sumMember = chislitel / znamenatel;
       result += sumMember;
       count++;
@@ -309,13 +287,11 @@ long double s21_pow(double base, double power) {
     exception = TRUE;
   }
   if (!exception) {
-    if (base < 0) {  // если основание отрицательное, то
-      copy *= -1;  // его нужно преобразовать
+    if (base < 0) {
+      copy *= -1;
       result = s21_exp(power * s21_log(copy));
-      if (s21_fmod(power, 2) != 0) {  // для проверки четной / нечетной степени
-        result *=
-            -1;  // если число изначально отрицательное и степень отрицательная,
-                 // то ответ также должен быть отрицательный
+      if (s21_fmod(power, 2) != 0) {
+        result *= -1;
       }
     } else {
       result = s21_exp(power * s21_log(base));
@@ -327,13 +303,13 @@ long double s21_pow(double base, double power) {
 long double s21_sqrt(double x) {
   long double result = 0;
   if (x == S21_NAN || x == S21_NEG_INF || x < 0)
-    result = S21_NAN;  // невозможно вычислить корень из отрицательного числа
+    result = S21_NAN;
   else if (x == S21_POS_INF)
     result = S21_POS_INF;
   else if (x == 0.0)
     result = x;
   else
-    result = s21_pow(x, 0.5);  // степень 1/2 приравнивается к корню
+    result = s21_pow(x, 0.5);
   return result;
 }
 
